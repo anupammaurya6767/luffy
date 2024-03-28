@@ -127,10 +127,15 @@ async function torrentHandler(whatsappBot, message) {
 
                     const filelink = await uploadToDrive(path.join(__dirname, '..', '..', '..', 'serviceAccountKey.json'), path.resolve(downloadPath, torrent.name), whatsappBot, response, message);
                     await whatsappBot.sendMessage(message?.key?.remoteJid, { text: `Aye aye, captain! The file ${torrent.name} is uploaded! Here's the link: ${filelink} ⚓`, edit: response.key });
-                    await databaseHandler.addTorrent(magnetURI, true);
-                    console.log('Torrent added to the database successfully');
-                    writeToLogFile('Torrent added to the database successfully');
-                    writeToLogFile(`File ${torrent.name} uploaded. Link: ${filelink}`);
+                    if(filelink){
+                        await databaseHandler.addTorrent(magnetURI, true);
+                        console.log('Torrent added to the database successfully');
+                        writeToLogFile('Torrent added to the database successfully');
+                        writeToLogFile(`File ${torrent.name} uploaded. Link: ${filelink}`);
+                    }else{
+                        writeToLogFile('Torrent not uploaded successfully');
+                    }
+                    
                     // Close the database connection
                     databaseHandler.closeConnection();
                     writeToLogFile('Database Connection Closed!')
