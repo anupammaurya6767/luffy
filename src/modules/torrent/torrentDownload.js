@@ -126,13 +126,14 @@ async function torrentHandler(whatsappBot, message) {
                     writeToLogFile('Uploading starting soon');
 
                     const filelink = await uploadToDrive(path.join(__dirname, '..', '..', '..', 'serviceAccountKey.json'), path.resolve(downloadPath, torrent.name), whatsappBot, response, message);
-                    await whatsappBot.sendMessage(message?.key?.remoteJid, { text: `Aye aye, captain! The file ${torrent.name} is uploaded! Here's the link: ${filelink} ⚓`, edit: response.key });
                     if(filelink){
+                        await whatsappBot.sendMessage(message?.key?.remoteJid, { text: `Aye aye, captain! The file ${torrent.name} is uploaded! Here's the link: ${filelink} ⚓`, edit: response.key });
                         await databaseHandler.addTorrent(magnetURI, true);
                         console.log('Torrent added to the database successfully');
                         writeToLogFile('Torrent added to the database successfully');
                         writeToLogFile(`File ${torrent.name} uploaded. Link: ${filelink}`);
                     }else{
+                        await whatsappBot.sendMessage(message?.key?.remoteJid, { text: `Torrent not uploaded successfully ⚓`, edit: response.key });
                         writeToLogFile('Torrent not uploaded successfully');
                     }
                     
