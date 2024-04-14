@@ -2,6 +2,7 @@ const DatabaseHandler = require('../../database/database');
 const {getMonth} = require('../../utils/getMonth')
 async function topHandler(whatsappBot, receivedMessage) {
     try {
+        console.log(receivedMessage);
         const isMessageFromMe = receivedMessage?.key?.fromMe;
         const dbHandler = new DatabaseHandler();
         await dbHandler.connect();
@@ -21,6 +22,7 @@ async function topHandler(whatsappBot, receivedMessage) {
 
         // Get the group ID and user ID from the receivedMessage
         const groupId = receivedMessage?.key?.remoteJid;
+        console.log(groupId);
         const userId = receivedMessage?.key?.fromMe ? receivedMessage?.key?.fromMe : receivedMessage?.key?.participant;
 
         // Check if the group is allowed
@@ -28,9 +30,6 @@ async function topHandler(whatsappBot, receivedMessage) {
 
         // Check if the user is allowed
         const userAllowed = allowedDocument.users.includes(userId);
-
-        // Close the database connection
-        dbHandler.closeConnection();
 
         const currentMonth = getMonth(new Date()); // Assuming getMonth returns the month number (1 for January, 2 for February, etc.)
 
@@ -41,15 +40,17 @@ async function topHandler(whatsappBot, receivedMessage) {
             // Reset message counts for all users in the group
             await dbHandler.resetMessageCounts(groupId, currentMonth);
         }
-
+        const topUsers = await dbHandler.getTopUsers(groupId);
+        console.log(topUsers);
         // Construct the message
         let messageContent = "🎉 Top Users in the Group 🎉\n\n";
 
         if (topUsers.length > 0) {
+            const processedGroupId = groupId.replace('.us', '');
             topUsers.forEach((user, index) => {
-                if (user && user.userid && user.messageCounts && user.messageCounts[groupId]) {
-                    const userName = user.name;
-                    const messageCount = user.messageCounts[groupId];
+                const userName = user?.name;
+                const messageCount = user?.messageCounts?.[processedGroupId]?.us;
+                if (userName && messageCount !== undefined) {
                     messageContent += `${index + 1}. *${userName}* - ${messageCount} messages\n`;
                 }
             });
@@ -69,13 +70,12 @@ async function topHandler(whatsappBot, receivedMessage) {
             });
         }
 
-        return topUsers;
+        // Close the database connection
+        dbHandler.closeConnection();
     } catch (error) {
         console.error('Error fetching and sending top users:', error);
         return [];
     }
 }
-
-
 
 module.exports = { topHandler };

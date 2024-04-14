@@ -330,7 +330,7 @@ class DatabaseHandler {
     async getTopUsers(groupId) {
         try {
             const topUsers = await this.memberCollection
-                .find({}, { projection: { _id: 0, userid: 1, name: 1, [`messageCounts.${groupId}`]: 1 } })
+                .find({ [`messageCounts.${groupId}`]: { $exists: true } }, { projection: { _id: 0, userid: 1, name: 1, [`messageCounts.${groupId}`]: 1 } })
                 .sort({ [`messageCounts.${groupId}`]: -1 })
                 .limit(10)
                 .toArray();
