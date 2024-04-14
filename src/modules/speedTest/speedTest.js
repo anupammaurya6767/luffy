@@ -25,7 +25,7 @@ async function speedTestHandler(whatsappBot, message) {
         const allowedId = process.env.ALLOWED_ID;
 
         // Find the document with the allowed ID
-        const allowedDocument = await databaseHandler.findAllowed({ allowedid: allowedId });
+        const allowedDocument = await databaseHandler.findAllowed(allowedId );
 
         if (!allowedDocument) {
             console.error('No document found with the allowedid:', allowedId);

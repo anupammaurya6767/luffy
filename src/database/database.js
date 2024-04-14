@@ -116,6 +116,7 @@ class DatabaseHandler {
                 name: name,
                 welcomeMsg: welcomeMsg,
                 rules: JSON.stringify(rules),
+                lastRecordedMonth: null // Added last recorded month field
             });
             console.log('Group added successfully');
             writeToLogFile('Group added successfully');
@@ -135,6 +136,41 @@ class DatabaseHandler {
             throw error;
         }
     }
+
+    async getLastRecordedMonth(groupId) {
+        try {
+            const group = await this.groupCollection.findOne({ chatId: groupId });
+            return group ? group.lastRecordedMonth : null;
+        } catch (error) {
+            console.error('Error getting last recorded month:', error);
+            writeToLogFile(`Error getting last recorded month: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async resetMessageCounts(groupId, currentMonth) {
+        try {
+            await this.memberCollection.updateMany(
+                { group: groupId },
+                { $set: { messageCount: 0 }, $currentDate: { lastModified: true } }
+            );
+
+            // Update last recorded month for the group
+            await this.groupCollection.updateOne(
+                { chatId: groupId },
+                { $set: { lastRecordedMonth: currentMonth } }
+            );
+
+            console.log('Message counts reset for group:', groupId);
+            writeToLogFile(`Message counts reset for group: ${groupId}`);
+        } catch (error) {
+            console.error('Error resetting message counts:', error);
+            writeToLogFile(`Error resetting message counts: ${error.message}`);
+            throw error;
+        }
+    }
+
+
 
     async addAllowed(allowedData) {
         try {
@@ -158,14 +194,28 @@ class DatabaseHandler {
         }
     }
     
-    async addMember(userId) {
+    async addMember(userId, userName = "user") {
         try {
-            await this.memberCollection.insertOne({ userid: userId });
+            await this.memberCollection.insertOne({ userid: userId, name: userName });
             console.log('Member added successfully');
             writeToLogFile('Member added successfully');
         } catch (error) {
             console.error('Error adding member:', error);
             writeToLogFile(`Error adding member: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async updateUserName(userId, newName) {
+        try {
+            const filter = { userid: userId };
+            const updateDoc = { $set: { name: newName } };
+            await this.memberCollection.updateOne(filter, updateDoc);
+            console.log('User name updated successfully');
+            writeToLogFile('User name updated successfully');
+        } catch (error) {
+            console.error('Error updating user name:', error);
+            writeToLogFile(`Error updating user name: ${error.message}`);
             throw error;
         }
     }
@@ -259,13 +309,47 @@ class DatabaseHandler {
         }
     }
     
+    // Method to update message count for a user in a group
+    async updateMessageCount(userId, groupId) {
+        try {
+            const filter = { userid: userId };
+            const updateDoc = {
+                $inc: { [`messageCounts.${groupId}`]: 1 }
+            };
+            await this.memberCollection.updateOne(filter, updateDoc, { upsert: true });
+            console.log('Message count updated successfully');
+            writeToLogFile('Message count updated successfully');
+        } catch (error) {
+            console.error('Error updating message count:', error);
+            writeToLogFile(`Error updating message count: ${error.message}`);
+            throw error;
+        }
+    }
     
+    // Method to get top 10 users by message count in a group
+    async getTopUsers(groupId) {
+        try {
+            const topUsers = await this.memberCollection
+                .find({}, { projection: { _id: 0, userid: 1, name: 1, [`messageCounts.${groupId}`]: 1 } })
+                .sort({ [`messageCounts.${groupId}`]: -1 })
+                .limit(10)
+                .toArray();
+            console.log('Top users fetched successfully');
+            writeToLogFile('Top users fetched successfully');
+            return topUsers;
+        } catch (error) {
+            console.error('Error fetching top users:', error);
+            writeToLogFile(`Error fetching top users: ${error.message}`);
+            throw error;
+        }
+    }
+    
+
     closeConnection() {
         this.mongoClient.close();
         console.log('Database connection closed');
         writeToLogFile('Database connection closed');
     }
-    }
-    
-    module.exports = DatabaseHandler;
-    
+}
+
+module.exports = DatabaseHandler;
