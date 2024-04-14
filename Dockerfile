@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Change working directory to src
-WORKDIR /usr/src/app/src
+WORKDIR /usr/src/app
 
 # Expose port 9600
 EXPOSE 9600
