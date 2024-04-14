@@ -10,11 +10,14 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 
-# Copy all project files to the working directory
+# Copy all source files to the working directory
 COPY . .
+
+# Change working directory to src
+WORKDIR /usr/src/app/src
 
 # Expose port 9600
 EXPOSE 9600
 
 # Command to run the application
-CMD ["node", "src/index.js"]
+CMD ["node", "index.js"]
