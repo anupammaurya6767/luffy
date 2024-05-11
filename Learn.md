@@ -1,3 +1,4 @@
+
 # Learn
 
 This document provides instructions on how to set up and build the project locally.
@@ -8,6 +9,7 @@ Before you begin, ensure you have the following installed on your local machine:
 
 - Node.js and npm (Node Package Manager)
 - Docker (if applicable)
+- Google Drive API credentials (`credentials.json`) for uploading files to Google Drive.
 
 ## Setup
 
@@ -44,6 +46,8 @@ Follow these steps to set up the project locally:
 
    Replace `your-mongodb-url`, `your-folder-id`, `your-allowed-id`, and `your-leech-limit` with the appropriate values for your project.
 
+5. Place your Google Drive API credentials file (`credentials.json`) in the root directory of the project.
+
 ## Using Docker
 
 If you want to run the project using Docker, follow these steps:
@@ -57,7 +61,7 @@ If you want to run the project using Docker, follow these steps:
 2. Run the Docker container:
 
    ```bash
-   docker run -d -p 9600:9600 --env-file .env luffy-image
+   docker run -d -p 9600:9600 --env-file .env -v $(pwd)/credentials.json:/app/credentials.json luffy-image
    ```
 
 ## Run Locally
