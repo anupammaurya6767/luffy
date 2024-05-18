@@ -30,7 +30,7 @@ async function addGroup(whatsappBot, message) {
         const userId = message?.key?.fromMe ? message?.key?.fromMe : message?.key?.participant;
 
         // Check if the user is allowed
-        const userAllowed = allowedDocument.users.includes(userId);
+        const userAllowed = allowedDocument?.users?.includes(userId);
 
 
 
@@ -60,12 +60,12 @@ async function addGroup(whatsappBot, message) {
         }
 
         // Add the group ID to the allowed groups
-        if(allowedDocument.groups.includes(groupId))
+        if(allowedDocument?.groups?.includes(groupId))
         {
             writeToLogFile('Group already exists in the allowed groups.');
             return;
         }
-        allowedDocument.groups.push(groupId);
+        allowedDocument?.groups?.push(groupId);
         await databaseHandler.updateAllowedGroups(allowedId,allowedDocument.groups); // Update allowed groups
 
         console.log('Group added successfully to allowed groups.');

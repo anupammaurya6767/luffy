@@ -343,6 +343,25 @@ class DatabaseHandler {
             throw error;
         }
     }
+
+    // Method to update Welcome mesaage  in a group
+    async updateWelcome(groupId, message) {
+        try {
+            const filter = { chatId: groupId };
+            const updateDoc = {
+                $set: { welcomeMsg: message }
+            };
+            await this.groupCollection.updateOne(filter, updateDoc, {
+              upsert: true,
+            });
+            console.log('Welcome message updated successfully');
+            writeToLogFile('Welcome message updated successfully');
+        } catch (error) {
+            console.error('Error updating welcome message', error);
+            writeToLogFile(`Error updating welcome message: ${error.message}`);
+            throw error;
+        }
+    }
     
 
     closeConnection() {

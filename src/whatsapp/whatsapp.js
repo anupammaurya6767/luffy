@@ -2,6 +2,7 @@ const { makeWASocket, DisconnectReason } = require('@whiskeysockets/baileys');
 const { writeToLogFile } = require('../utils/logs');
 const DatabaseHandler = require('../database/database');
 const { handleCommand } = require('./commandHandler/commandHandler');
+const {getGroupEvent} = require("./eventListener/groupHandler/getGroupEvent");
 
 class WhatsAppHandler {
     constructor(io) {
@@ -48,6 +49,10 @@ class WhatsAppHandler {
 
             whatsappBot.ev.on('creds.update', async () => {
                 await this.databaseHandler.saveCreds();
+            });
+
+            whatsappBot.ev.on('group-participants.update', async (event) => {
+              await getGroupEvent(whatsappBot,event);
             });
         } catch (error) {
             console.error('Error connecting to MongoDB:', error);
