@@ -7,6 +7,7 @@ const addPseudo = require('../../modules/admin/addPseudo');
 const removeGroup = require('../../modules/admin/remGroup');
 const removePseudo = require('../../modules/admin/remPseudo');
 const syncGroup = require('../../modules/admin/syncGroup');
+const welcome = require('../../modules/admin/welcome');
 const { logHandler } = require('../../modules/admin/log');
 const { updateMessageCount } = require('../../utils/updateCount');
 const {topHandler} = require('../../modules/user/topHandler')
@@ -65,6 +66,10 @@ async function handleCommand(whatsappBot,incomingMessage) {
 
         case 'top':
         await topHandler(whatsappBot,message);
+        break;
+        
+        case 'welcome':
+        await welcome(whatsappBot,message);
         break;
         default:
             console.log("no command")
