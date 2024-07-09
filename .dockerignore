@@ -2,8 +2,10 @@
 node_modules/
 npm-debug.log
 
-# environment files 
-.env.example
+# Environment files
+.env
+.env.*
+!.env.example
 
 # node distribution files
 dist/
@@ -21,3 +23,9 @@ LICENSE
 # IDE configuration files
 .vscode
 .idea 
+
+# .github folder
+.github/
+
+
+*.md
