@@ -1,0 +1,31 @@
+# NPM files
+node_modules/
+npm-debug.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# node distribution files
+dist/
+
+# docker files 
+Dockerfile*
+.dockerignore
+
+# Git files
+README.md
+LICENSE
+.git
+.gitignore
+
+# IDE configuration files
+.vscode
+.idea 
+
+# .github folder
+.github/
+
+
+*.md
