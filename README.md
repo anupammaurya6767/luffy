@@ -54,6 +54,7 @@
 - Additional features to enhance group interactions and management.
 
 ## Installation
+
 ### Prerequisites
 
 Before you begin, ensure you have the following installed on your local machine:
@@ -115,6 +116,26 @@ If you want to run the project using Docker, follow these steps:
    docker run -d -p 9600:9600 --env-file .env -v $(pwd)/credentials.json:/app/credentials.json luffy-image
    ```
 
+### Using Kubernetes
+
+1. Start the kubernetes:
+
+```bash
+minikube start
+```
+
+2. Create the .env file and credentials.json in root folder
+
+3. Run the multiple Pods of Server:
+
+```bash
+ kubectl create configmap node-app-env --from-env-file=.env
+ kubectl create secret generic node-app-credentials --from-file=credentials.json
+ kubectl apply -f deployment.yaml
+ kubectl apply -f service.yaml
+
+```
+
 ### Run Locally
 
 To run the project locally without Docker, follow these steps:
@@ -141,8 +162,8 @@ We welcome contributions to Luffy! Please refer to our [Contributing Guidelines]
 
 ## 👥Maintainers
 
--   [**Anupam Maurya**](https://github.com/anupammaurya6767) 
--   [**Suhani Paliwal**](https://github.com/suhanipaliwal) 
+- [**Anupam Maurya**](https://github.com/anupammaurya6767)
+- [**Suhani Paliwal**](https://github.com/suhanipaliwal)
 
 <div>
  
