@@ -1,6 +1,5 @@
 # Use official Node.js image as base
-FROM node:18
-
+FROM mhart/alpine-node
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
